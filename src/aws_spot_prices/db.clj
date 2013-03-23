@@ -8,12 +8,18 @@
 ;;   (info "dumping...")
 ;;   (with-out-str (clojure.pprint/pprint filters)))
 
-(defn db-spot-prices2 [filters]
-  (defdb sqll (sqlite3 { :db "dev.db"}))
-  (defentity PriceObjects)
-  (json/write-str
-   (select (apply-filters (select* PriceObjects)
-                          filters))))
+
+(defn get-korma-fn [fn-name]
+  (ns-resolve 'korma.core (symbol fn-name)))
+
+(defn apply-filter [query filter-name-val]
+  (let [[filter-name filter-val] filter-name-val]
+    (condp = filter-name
+      "limit" ((get-korma-fn filter-name) query filter-val)
+      "offset" ((get-korma-fn filter-name) query filter-val)
+      "startDate" (where query (>= :timestamp filter-val))
+      "endDate" (where query (<= :timestamp filter-val))
+      "sortField" (order query (keyword filter-val)))))
 
 (defn apply-filters [selector-base filters]
   (loop [selector selector-base
@@ -22,10 +28,12 @@
       selector
       (recur (apply-filter selector (first filters)) (rest filters)))))
 
-(defn apply-filter [korma-selector filter]
-  (info filter)
-  ((ns-resolve 'korma.core (symbol (filter 0)))
-   korma-selector (filter 1)))
+(defn db-spot-prices2 [filters]
+  (defdb sqll (sqlite3 { :db "dev.db"}))
+  (defentity PriceObjects)
+  (json/write-str
+   (select (apply-filters (select* PriceObjects)
+                          filters))))
 
 ;; (defn db-spot-prices []
 ;;   (defdb sqll (sqlite3 { :db "dev.db" }))
