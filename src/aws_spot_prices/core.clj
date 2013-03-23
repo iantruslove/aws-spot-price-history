@@ -16,7 +16,7 @@
 ;;    :body (str "Request:\n\n"
 ;;               (with-out-str (clojure.pprint/pprint request))) })
 
-(defn handler3 [request]
+(defn handler [request]
 ;;  (info request)
   {:status 200
    :headers {"Content-type" "application/json"
@@ -24,7 +24,7 @@
    :body (db-spot-prices2 (:params request) ) })
 
 (def app
-  (-> handler3
+  (-> handler
       (wrap-stacktrace)
       (wrap-params)
       (wrap-reload '(aws-spot-prices.core))
