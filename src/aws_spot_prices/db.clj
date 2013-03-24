@@ -15,8 +15,8 @@
 (defn apply-filter [query filter-name-val]
   (let [[filter-name filter-val] filter-name-val]
     (condp = filter-name
-      "limit" ((get-korma-fn filter-name) query filter-val)
-      "offset" ((get-korma-fn filter-name) query filter-val)
+      "limit" ((get-korma-fn filter-name) query (Integer. filter-val))
+      "offset" ((get-korma-fn filter-name) query (Integer. filter-val))
       "startDate" (where query (>= :timestamp filter-val))
       "endDate" (where query (<= :timestamp filter-val))
       "sortField" (order query (keyword filter-val)))))
