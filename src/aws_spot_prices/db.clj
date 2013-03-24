@@ -34,9 +34,3 @@
   (json/write-str
    (select (apply-filters (select* PriceObjects)
                           filters))))
-
-;; (defn db-spot-prices []
-;;   (defdb sqll (sqlite3 { :db "dev.db" }))
-;;   (defentity PriceObjects)
-;;   (json/write-str
-;;    (select PriceObjects (where { :timestamp [>= "2013-01-02"]}) (limit 2) (offset 3))))
