@@ -6,12 +6,14 @@
   (:use ring.middleware.stacktrace)
   (:use [clojure.tools.logging :only (info error)]))
 
-
-(defn handler [request]
+(defn ok [data]
   {:status 200
    :headers {"Content-type" "application/json"
              "Access-Control-Allow-Origin" "*" }
-   :body (db-spot-prices2 (:params request) ) })
+   :body data })
+
+(defn handler [request]
+  (ok (db-spot-prices (:params request))))
 
 (def app
   (-> handler

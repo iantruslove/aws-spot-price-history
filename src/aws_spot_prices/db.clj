@@ -28,7 +28,7 @@
       selector
       (recur (apply-filter selector (first filters)) (rest filters)))))
 
-(defn db-spot-prices2 [filters]
+(defn db-spot-prices [filters]
   (defdb sqll (sqlite3 { :db "dev.db"}))
   (defentity PriceObjects)
   (json/write-str
