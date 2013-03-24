@@ -8,7 +8,6 @@
 ;;   (info "dumping...")
 ;;   (with-out-str (clojure.pprint/pprint filters)))
 
-
 (defn get-korma-fn [fn-name]
   (ns-resolve 'korma.core (symbol fn-name)))
 
@@ -21,9 +20,15 @@
       "endDate" (where query (<= :timestamp filter-val))
       "sortField" (order query (keyword filter-val)))))
 
+(defn ensure-filters-include-limit [filters]
+  (let [limit "limit"]
+    (if (not (contains? filters limit))
+      (assoc filters limit 10)
+      filters)))
+
 (defn apply-filters [selector-base filters]
   (loop [selector selector-base
-         filters filters]
+         filters (ensure-filters-include-limit filters)]
     (if (empty? filters)
       selector
       (recur (apply-filter selector (first filters)) (rest filters)))))
