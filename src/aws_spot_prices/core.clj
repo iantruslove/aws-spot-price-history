@@ -33,4 +33,5 @@
 (defn boot []
   (run-jetty app {:port 8080}))
 
-
+(defn -main [port]
+  (run-jetty app {:port (Integer. port)}))
